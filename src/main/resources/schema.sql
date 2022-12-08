@@ -27,3 +27,11 @@ CREATE TABLE personas (
   email VARCHAR2(30) NOT NULL  
 );
 
+DROP TABLE IF EXISTS relaciones;
+
+CREATE TABLE relaciones (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  pers_id_1 BIGINT NOT NULL,
+  pers_id_2 BIGINT NOT NULL,
+  vinculo VARCHAR2(10) NOT NULL  
+);

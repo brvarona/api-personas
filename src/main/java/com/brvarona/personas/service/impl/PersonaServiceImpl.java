@@ -26,6 +26,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class PersonaServiceImpl implements PersonaService {
 
+	private static final String PERSONA_STR = "Persona";
+
 	@Autowired
 	private PersonaRepository personaRepository;
 	
@@ -49,7 +51,7 @@ public class PersonaServiceImpl implements PersonaService {
 	@Cacheable("persona")
 	public Persona getPersona(Long id) {
 		log.info("Service: getPersona, id: {}", id);
-		return personaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Persona", "ID", id));
+		return personaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PERSONA_STR, "ID", id));
 	}
 
 	@Caching(evict = { @CacheEvict(value = "personas", allEntries = true),
@@ -80,7 +82,7 @@ public class PersonaServiceImpl implements PersonaService {
 	public Persona updatePersona(Long id, ActualizarPersonaRequest personaRequest) {
 		log.info("Service: updatePersona, id: {}", id);
 		var persona = personaRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Persona", "ID", id));
+				.orElseThrow(() -> new ResourceNotFoundException(PERSONA_STR, "ID", id));
 
 		return personaRepository.save(mapper.fromUpdateRequest(persona, personaRequest));
 	}
@@ -90,7 +92,7 @@ public class PersonaServiceImpl implements PersonaService {
 	public void deletePersona(Long id) {
 		log.info("Service: deletePersona, id: {}", id);
 		var superhero = personaRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Persona", "ID", id));
+				.orElseThrow(() -> new ResourceNotFoundException(PERSONA_STR, "ID", id));
 
 		personaRepository.delete(superhero);
 	}
