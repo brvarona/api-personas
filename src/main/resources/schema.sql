@@ -1,0 +1,29 @@
+DROP TABLE IF EXISTS paises;
+
+CREATE TABLE paises (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR2(80) NOT NULL,
+  codigo VARCHAR2(3) NOT NULL
+);
+
+DROP TABLE IF EXISTS tipo_documento;
+
+CREATE TABLE tipo_documento (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  tipo VARCHAR2(5) NOT NULL,
+  descripcion VARCHAR2(50) NOT NULL
+);
+
+DROP TABLE IF EXISTS personas;
+
+CREATE TABLE personas (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  tipo_documento_id BIGINT NOT NULL,
+  nombre VARCHAR2(30) NOT NULL,
+  apellido VARCHAR2(30) NOT NULL,
+  nro_documento VARCHAR2(30) NOT NULL,
+  pais_id BIGINT NOT NULL,
+  edad INT NOT NULL,
+  email VARCHAR2(30) NOT NULL  
+);
+

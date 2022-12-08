@@ -63,12 +63,4 @@ public class Persona implements Serializable {
 	@Email
 	private String email;
 	
-//	@OneToMany(fetch = FetchType.LAZY)
-//	@JoinColumns({
-//		@JoinColumn(name = "id", referencedColumnName = "pers_id_1"),
-//		@JoinColumn(name = "id", referencedColumnName = "pers_id_2")
-//	})  
-//
-//    private List<Relacion> relaciones;
-	
 }
