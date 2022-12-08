@@ -23,32 +23,49 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.brvarona.personas.mapper.PersonaMapper;
 import com.brvarona.personas.model.Pais;
 import com.brvarona.personas.model.Persona;
 import com.brvarona.personas.model.TipoDocumento;
 import com.brvarona.personas.payload.ActualizarPersonaRequest;
+import com.brvarona.personas.payload.CrearPersonaRequest;
+import com.brvarona.personas.repository.PaisRepository;
 import com.brvarona.personas.repository.PersonaRepository;
+import com.brvarona.personas.repository.TipoDocumentoRepository;
 
 
 @SpringBootTest
 class PersonaServiceTest {
 
 	@MockBean
-	PersonaRepository personaRepository;
+	private PersonaRepository personaRepository;
+	
+	@MockBean
+	private TipoDocumentoRepository tipoDocumentoRepository;
+	
+	@MockBean
+	private PaisRepository paisRepository;
+	
+	@MockBean
+	private PersonaMapper personaMapper;
 
 	@Autowired
-	PersonaService personaService;
+	private PersonaService personaService;
 	
 	private List<Persona> personas;
+	
+	private Pais pais;
+	
+	private TipoDocumento tipoDocumento;	
 
     @BeforeEach
     public void setUp() {
-    	var pais = new Pais();
+    	pais = new Pais();
     	pais.setId(1L);
     	pais.setNombre("Argentina");
     	pais.setCodigo("ARG");
     	
-    	var tipoDocumento = new TipoDocumento();
+    	tipoDocumento = new TipoDocumento();
     	tipoDocumento.setId(1L);
     	tipoDocumento.setTipo("DU");
     	tipoDocumento.setDescripcion("Documento unico");
@@ -59,7 +76,7 @@ class PersonaServiceTest {
         persona1.setApellido("Grillo");
         persona1.setTipoDocumento(tipoDocumento);
         persona1.setNroDocumento("45666777");
-        persona1.setPais(null);
+        persona1.setPais(pais);
         persona1.setEdad(20);
         persona1.setEmail("pepito.grillo@mail.com");
        
@@ -69,7 +86,7 @@ class PersonaServiceTest {
         persona2.setApellido("Gomez");
         persona2.setTipoDocumento(tipoDocumento);
         persona2.setNroDocumento("1234567");
-        persona2.setPais(null);
+        persona2.setPais(pais);
         persona2.setEdad(50);
         persona2.setEmail("jgomez@mail.com");       
 
@@ -111,11 +128,48 @@ class PersonaServiceTest {
 		verifyNoMoreInteractions(personaRepository);
 	}
 
+	
 	@Test
-	void updateSuperheroTest() {
+	void createPersonaTest() {
+		CrearPersonaRequest personaRequest = new CrearPersonaRequest();
+		personaRequest.setNombre("Pepe");
+		personaRequest.setApellido("Grillo");
+		personaRequest.setTipoDocumentoId(1L);
+		personaRequest.setNroDocumento("45666777");
+		personaRequest.setPaisId(1L);
+		personaRequest.setEdad(20);
+		personaRequest.setEmail("pepito.grillo@mail.com");
+		
+		when(paisRepository.findById(any(Long.class))).thenReturn(Optional.of(pais));
+		when(tipoDocumentoRepository.findById(any(Long.class))).thenReturn(Optional.of(tipoDocumento));
+		when(personaMapper.fromCreateRequest(any(CrearPersonaRequest.class))).thenReturn(personas.get(0));
+		when(personaRepository.findByTipoDocumentoAndNroDocumentoAndPais(any(TipoDocumento.class), any(String.class), any(Pais.class)))
+																			.thenReturn(Optional.empty());
+
+		when(personaRepository.save(any(Persona.class))).thenReturn(personas.get(0));
+
+		Persona result = personaService.createPersona(personaRequest);
+		assertNotNull(result);
+		assertThat(result.getId()).isEqualTo(1);
+		assertThat(result.getTipoDocumento().getId()).isEqualTo(1);
+		assertThat(result.getPais().getId()).isEqualTo(1);
+		assertThat(result.getEmail()).isEqualTo("pepito.grillo@mail.com");
+		
+		verify(personaRepository, times(1)).findByTipoDocumentoAndNroDocumentoAndPais(any(TipoDocumento.class), any(String.class), any(Pais.class));
+		verify(personaRepository, times(1)).save(any(Persona.class));
+		verifyNoMoreInteractions(personaRepository);
+	}
+
+	
+	@Test
+	void updatePersonaTest() {
 		ActualizarPersonaRequest personaRequest = new ActualizarPersonaRequest();
 		personaRequest.setEmail("brvarona@otromail.com");
-
+		
+		var personaMap = personas.get(0);
+		personaMap.setEmail("brvarona@otromail.com");
+		
+		when(personaMapper.fromUpdateRequest(any(Persona.class), any(ActualizarPersonaRequest.class))).thenReturn(personaMap);
 		when(personaRepository.findById(anyLong())).thenReturn(Optional.of(personas.get(0)));
 		when(personaRepository.save(any(Persona.class))).thenReturn(personas.get(0));
 
@@ -130,7 +184,7 @@ class PersonaServiceTest {
 	}
 
 	@Test
-	void deleteSuperheroTest() {
+	void deletePersonaTest() {
 
 		when(personaRepository.findById(anyLong())).thenReturn(Optional.of(personas.get(0)));
 		doNothing().when(personaRepository).delete(any(Persona.class));

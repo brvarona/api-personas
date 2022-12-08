@@ -30,8 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PersonaControllerImpl implements PersonaController {
 
 	@Autowired
-	PersonaService personaService;
-	
+	PersonaService personaService;	
 	
 	@GetMapping
 	@TrackExecutionTime
