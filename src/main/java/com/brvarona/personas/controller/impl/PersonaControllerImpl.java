@@ -34,6 +34,7 @@ public class PersonaControllerImpl implements PersonaController {
 	
 	
 	@GetMapping
+	@TrackExecutionTime
 	public ResponseEntity<Page<Persona>> getAllPersonas(Pageable pageable) {
 		log.info("Obteniendo todas las personas");
 		
@@ -41,6 +42,7 @@ public class PersonaControllerImpl implements PersonaController {
 	}
 
 	@GetMapping("/{id}")
+	@TrackExecutionTime
 	public ResponseEntity<Persona> getPersona(@PathVariable(value = "id") Long id) {
 		log.info("Obteniendo persona por id: {}", id);
 
@@ -66,6 +68,7 @@ public class PersonaControllerImpl implements PersonaController {
 	}
 
 	@DeleteMapping("/{id}")
+	@TrackExecutionTime
 	public ResponseEntity<?> deletePersona(@PathVariable(value = "id") Long id) {
 		log.info("Eliminando la persona con id: {}", id);
 		personaService.deletePersona(id);
