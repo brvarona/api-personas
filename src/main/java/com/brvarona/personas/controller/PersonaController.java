@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import com.brvarona.personas.model.Persona;
-import com.brvarona.personas.model.Relacion;
 import com.brvarona.personas.payload.ActualizarPersonaRequest;
 import com.brvarona.personas.payload.CrearPersonaRequest;
 
